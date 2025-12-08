@@ -192,7 +192,9 @@ export const sendEmailTool = defineTool({
 
     if (!allowedDomains.includes(domain)) {
       throw new Error(
-        `Cannot send to domain "${domain}". Allowed: ${allowedDomains.join(", ")}`
+        `Cannot send to domain "${domain}". Allowed: ${allowedDomains.join(
+          ", "
+        )}`
       );
     }
 
@@ -333,7 +335,9 @@ Use console.log() to output results. Write efficient code that composes multiple
 /**
  * Build the complete system prompt for code mode
  */
-export function buildCodeModeSystemPrompt(additionalInstructions?: string): string {
+export function buildCodeModeSystemPrompt(
+  additionalInstructions?: string
+): string {
   const codeMode = getCodeMode();
   const toolTypeDefs = codeMode.getToolTypeDefinitions();
 
@@ -361,12 +365,14 @@ export function buildCodeModeSystemPrompt(additionalInstructions?: string): stri
  * });
  * ```
  */
-export function createCodeMode(config: {
-  additionalInstructions?: string;
-  userId?: string;
-  sessionId?: string;
-  scopes?: string[];
-} = {}) {
+export function createCodeMode(
+  config: {
+    additionalInstructions?: string;
+    userId?: string;
+    sessionId?: string;
+    scopes?: string[];
+  } = {}
+) {
   const { additionalInstructions, ...executionConfig } = config;
 
   return {
@@ -385,4 +391,3 @@ export {
   SANDBOX_TYPE_DEFINITIONS,
   defineTool,
 };
-

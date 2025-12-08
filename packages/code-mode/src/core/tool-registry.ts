@@ -215,6 +215,37 @@ export function createToolRegistry(
 // Type Generation Helpers
 // =============================================================================
 
+/**
+ * Zod 4 internal type for literal schemas
+ * The values array contains all allowed literal values
+ */
+interface Zod4LiteralDef {
+  values: ReadonlyArray<string | number | boolean>;
+}
+
+/**
+ * Zod 4 internal type for enum schemas
+ * The entries record maps enum keys to their values
+ */
+interface Zod4EnumDef {
+  entries: Record<string, string>;
+}
+
+/**
+ * Helper to safely access Zod 4 internal definition
+ * Zod 4 moved `._def` to `._zod.def`
+ */
+function getZod4Def<T>(schema: z.ZodType): T | undefined {
+  // Zod 4 structure: schema._zod.def
+  const zodMeta = schema as { _zod?: { def?: unknown } };
+  if (zodMeta._zod?.def) {
+    return zodMeta._zod.def as T;
+  }
+  // Fallback for potential older structure
+  const legacyMeta = schema as { _def?: unknown };
+  return legacyMeta._def as T | undefined;
+}
+
 function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -257,18 +288,28 @@ function zodToTypeString(schema: z.ZodType, typeName: string): string {
     return `Record<string, unknown>`;
   }
   if (schema instanceof z.ZodEnum) {
-    // In Zod 4, use _def.entries to get enum values
-    const enumDef = schema._def as { entries: Record<string, string> };
-    const values = Object.values(enumDef.entries);
-    return values.map((v) => `"${v}"`).join(" | ");
+    // In Zod 4, access enum entries through the internal def structure
+    const enumDef = getZod4Def<Zod4EnumDef>(schema);
+    if (enumDef?.entries) {
+      const values = Object.values(enumDef.entries);
+      return values.map((v) => `"${v}"`).join(" | ");
+    }
+    return "string"; // fallback if structure changed
   }
   if (schema instanceof z.ZodLiteral) {
-    // In Zod 4, use _zod.values to access the literal value
-    const literalSchema = schema as z.ZodLiteral<string | number | boolean>;
-    // Access through the def's values array (Zod 4 structure)
-    const def = literalSchema._def as unknown as { values: unknown[] };
-    const value = def.values?.[0] ?? (literalSchema as unknown as { value: unknown }).value;
-    return typeof value === "string" ? `"${value}"` : String(value);
+    // In Zod 4, literal values are stored in a values array
+    const literalDef = getZod4Def<Zod4LiteralDef>(schema);
+    if (literalDef?.values && literalDef.values.length > 0) {
+      // If multiple values, create a union type
+      if (literalDef.values.length > 1) {
+        return literalDef.values
+          .map((v) => (typeof v === "string" ? `"${v}"` : String(v)))
+          .join(" | ");
+      }
+      const value = literalDef.values[0];
+      return typeof value === "string" ? `"${value}"` : String(value);
+    }
+    return "unknown"; // fallback if structure changed
   }
   if (schema instanceof z.ZodUnion) {
     const types = (schema as z.ZodUnion<[z.ZodType, ...z.ZodType[]]>).options;

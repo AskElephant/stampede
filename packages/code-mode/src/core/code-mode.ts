@@ -51,7 +51,6 @@ import type {
   ToolBridgeConfig,
   SandboxConfig,
   Logger,
-  consoleLogger,
 } from "./types";
 
 /**
@@ -269,10 +268,10 @@ export class CodeMode {
       if (toolCallMatch) {
         const [, toolName, inputJson] = toolCallMatch;
         try {
-          const record = {
+          const record: CodeExecutionResult["toolCalls"][0] = {
             tool: toolName,
             input: JSON.parse(inputJson),
-            output: null as unknown,
+            output: null,
             durationMs: 0,
             success: false,
           };
