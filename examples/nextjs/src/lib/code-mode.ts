@@ -225,7 +225,7 @@ export function getCodeMode(): CodeMode {
         apiKey: process.env.DAYTONA_API_KEY,
         apiUrl: process.env.DAYTONA_API_URL || "https://app.daytona.io/api",
         target: process.env.DAYTONA_TARGET || "us",
-        sandboxLabel: "code-mode-nextjs-example",
+        sandboxLabel: "code-mode-trpc-network-v2",
       }),
 
       // tRPC protocol for type-safe tool communication
@@ -251,7 +251,7 @@ export function getCodeMode(): CodeMode {
       // Sandbox configuration
       sandboxConfig: {
         autoStopInterval: 30,
-        labels: { purpose: "code-mode-nextjs-example" },
+        labels: { purpose: "code-mode-trpc-network-v2" },
         network: {
           blockAll: false,
           allowList: ["*"],

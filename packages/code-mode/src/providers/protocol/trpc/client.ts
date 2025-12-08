@@ -134,9 +134,10 @@ export function generateFetchClientRuntime(
 
   const toolMethods = toolNames.map((name) => {
     const isMutation = mutationTools.has(name);
-    const type = isMutation ? "mutation" : "query";
 
-    return `
+    if (isMutation) {
+      // Mutations use POST with body
+      return `
   async ${name}(input: any) {
     const startTime = Date.now();
     console.log('[TOOL_CALL:${name}]', JSON.stringify(input));
@@ -177,6 +178,47 @@ export function generateFetchClientRuntime(
       throw error;
     }
   }`;
+    } else {
+      // Queries use GET with URL-encoded input
+      return `
+  async ${name}(input: any) {
+    const startTime = Date.now();
+    console.log('[TOOL_CALL:${name}]', JSON.stringify(input));
+    
+    try {
+      const inputParam = encodeURIComponent(JSON.stringify({ "0": { json: input } }));
+      const response = await fetch(\`\${TOOL_BRIDGE_URL}/${name}?batch=1&input=\${inputParam}\`, {
+        method: 'GET',
+        headers: {
+          'Authorization': \`Bearer \${EXECUTION_TOKEN}\`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
+      }
+      
+      const data = await response.json();
+      const result = data[0]?.result?.data?.json;
+      
+      if (data[0]?.error) {
+        throw new Error(data[0].error.message || 'Tool execution failed');
+      }
+      
+      const durationMs = Date.now() - startTime;
+      console.log('[TOOL_RESULT:${name}]', JSON.stringify({ durationMs, success: true }));
+      return result;
+    } catch (error: any) {
+      const durationMs = Date.now() - startTime;
+      console.log('[TOOL_ERROR:${name}]', JSON.stringify({ 
+        durationMs, 
+        success: false, 
+        error: error.message || 'Unknown error' 
+      }));
+      throw error;
+    }
+  }`;
+    }
   });
 
   return `// @ts-nocheck

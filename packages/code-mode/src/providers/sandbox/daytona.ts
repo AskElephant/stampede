@@ -118,6 +118,9 @@ export class DaytonaSandboxProvider extends BaseSandboxProvider {
 
     // Try to find existing sandbox
     try {
+      this.logger?.info("Looking for existing sandbox with label...", {
+        label,
+      });
       const existingSandbox = await this.daytonaClient.findOne({
         labels: { purpose: label },
       });
