@@ -9,7 +9,6 @@
  */
 
 import { z } from "zod";
-import { tool } from "ai";
 import {
   CodeMode,
   DaytonaSandboxProvider,
@@ -18,6 +17,7 @@ import {
   buildSystemPrompt,
   CODE_MODE_SYSTEM_PROMPT,
   SANDBOX_TYPE_DEFINITIONS,
+  withCodeMode,
   type ToolDefinition,
 } from "@askelephant/code-mode";
 
@@ -276,94 +276,32 @@ export function getCodeMode(): CodeMode {
 // =============================================================================
 
 /**
- * Creates the code execution tool for AI SDK
- */
-export function createCodeExecutionTool(options?: {
-  userId?: string;
-  sessionId?: string;
-  scopes?: string[];
-}) {
-  const codeMode = getCodeMode();
-
-  return tool({
-    description: `Execute TypeScript code in a secure sandbox environment with access to custom tools.
-
-The sandbox provides these built-in APIs:
-- fs: File system operations
-- http: HTTP requests
-- shell: Shell command execution
-- data: Data processing utilities (CSV, JSON, grouping, sorting)
-
-Additionally, you have access to the \`tools\` object with custom tool functions:
-- tools.getCurrentTime({ timezone?: string }) - Get current date/time
-- tools.fetchUrl({ url, method?, headers?, body? }) - Fetch data from URLs
-- tools.searchDatabase({ query, table, limit? }) - Search database (demo)
-- tools.sendEmail({ to, subject, body }) - Send email (demo)
-
-Use console.log() to output results. Write efficient code that composes multiple operations when possible.`,
-    inputSchema: z.object({
-      code: z
-        .string()
-        .describe(
-          "TypeScript code to execute. Use console.log() to output results."
-        ),
-      explanation: z
-        .string()
-        .optional()
-        .describe("Brief explanation of what the code does"),
-    }),
-    execute: async ({ code, explanation }) => {
-      // Ensure CodeMode is initialized
-      if (!(await codeMode.isReady())) {
-        await codeMode.initialize();
-      }
-
-      const result = await codeMode.executeCode(code, {
-        userId: options?.userId ?? "sandbox-user",
-        sessionId: options?.sessionId ?? `session-${Date.now()}`,
-        scopes: options?.scopes ?? ["*"],
-      });
-
-      return {
-        result,
-        explanation,
-      };
-    },
-  });
-}
-
-/**
- * Build the complete system prompt for code mode
- */
-export function buildCodeModeSystemPrompt(
-  additionalInstructions?: string
-): string {
-  const codeMode = getCodeMode();
-  const toolTypeDefs = codeMode.getToolTypeDefinitions();
-
-  return buildSystemPrompt({
-    toolTypeDefinitions: toolTypeDefs,
-    includeSandboxTypes: true,
-    customInstructions: additionalInstructions,
-  });
-}
-
-/**
- * Creates the tools and system prompt for code mode
+ * Create the codemode function with our pre-configured CodeMode instance.
+ *
+ * This provides a clean, ergonomic API for integrating with the AI SDK:
  *
  * @example
  * ```typescript
- * const { system, tools } = createCodeMode({
- *   additionalInstructions: "Focus on data analysis tasks"
+ * import { codemode } from "@/lib/code-mode";
+ *
+ * const { system, tools } = codemode({
+ *   system: "You are a helpful assistant",
  * });
  *
- * const result = streamText({
- *   model: "anthropic/claude-sonnet",
+ * const stream = streamText({
+ *   model: openai("gpt-4"),
  *   system,
  *   tools,
- *   messages: [...],
+ *   messages,
  * });
  * ```
+ */
+export const codemode = withCodeMode(getCodeMode());
+
+/**
+ * Legacy API - kept for backwards compatibility
+ *
+ * @deprecated Use `codemode()` instead for a cleaner API
  */
 export function createCodeMode(
   config: {
@@ -375,12 +313,10 @@ export function createCodeMode(
 ) {
   const { additionalInstructions, ...executionConfig } = config;
 
-  return {
-    system: buildCodeModeSystemPrompt(additionalInstructions),
-    tools: {
-      executeCode: createCodeExecutionTool(executionConfig),
-    },
-  };
+  return codemode({
+    system: additionalInstructions,
+    executionConfig,
+  });
 }
 
 // Re-export useful items from the package

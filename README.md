@@ -232,34 +232,101 @@ class GraphQLToolBridgeProtocol extends BaseToolBridgeProtocol {
 
 ## Using with AI SDK
 
+The package provides a clean, ergonomic API for integrating with the Vercel AI SDK:
+
 ```typescript
-import { streamText, tool } from "ai";
-import { CodeMode, buildSystemPrompt } from "@askelephant/code-mode";
+import { codemode } from "@askelephant/code-mode/ai";
+import { streamText } from "ai";
 
-// Create the code execution tool for AI SDK
-function createCodeExecutionTool(codeMode: CodeMode) {
-  return tool({
-    description: "Execute TypeScript code in a secure sandbox",
-    parameters: z.object({
-      code: z.string().describe("TypeScript code to execute"),
-    }),
-    execute: async ({ code }) => {
-      const result = await codeMode.executeCode(code);
-      return result;
+// Create a configured codemode function
+const { system, tools, initialize } = codemode({
+  system: "You are a helpful assistant",
+  codeModeOptions: {
+    sandboxProvider: new DaytonaSandboxProvider({ apiKey: process.env.DAYTONA_API_KEY }),
+    bridgeProtocol: new TRPCToolBridgeProtocol(),
+    bridgeConfig: {
+      serverUrl: "http://localhost:3000/api/trpc",
+      tokenConfig: { secretKey: process.env.SECRET_KEY },
     },
-  });
-}
+    tools: [myCustomTool],
+  },
+});
 
-// In your chat handler
-const result = streamText({
-  model: yourModel,
-  system: buildSystemPrompt({
-    toolTypeDefinitions: codeMode.getToolTypeDefinitions(),
-    customInstructions: "You are a helpful assistant.",
-  }),
-  messages,
+// Initialize before first use
+await initialize();
+
+// Use with streamText - it's that simple!
+const stream = streamText({
+  model: openai("gpt-4"),
+  system,
+  tools,
+  messages: [{ role: "user", content: "What time is it in New York?" }],
+});
+```
+
+### Using withCodeMode for Reusable Configuration
+
+For applications where you configure CodeMode once and reuse it:
+
+```typescript
+// lib/codemode.ts
+import { withCodeMode, CodeMode, DaytonaSandboxProvider, TRPCToolBridgeProtocol } from "@askelephant/code-mode";
+
+// Configure your CodeMode instance
+const codeModeInstance = new CodeMode({
+  sandboxProvider: new DaytonaSandboxProvider({ apiKey: process.env.DAYTONA_API_KEY }),
+  bridgeProtocol: new TRPCToolBridgeProtocol(),
+  bridgeConfig: {
+    serverUrl: process.env.TOOL_BRIDGE_URL,
+    tokenConfig: { secretKey: process.env.SECRET_KEY },
+  },
+  tools: [getCurrentTimeTool, fetchUrlTool],
+});
+
+// Export a pre-configured codemode function
+export const codemode = withCodeMode(codeModeInstance);
+```
+
+```typescript
+// app/api/chat/route.ts
+import { codemode } from "@/lib/codemode";
+import { streamText } from "ai";
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const { system, tools } = codemode({
+    system: "You are a helpful coding assistant",
+  });
+
+  const stream = streamText({
+    model: "openai/gpt-4",
+    system,
+    tools,
+    messages,
+  });
+
+  return stream.toUIMessageStreamResponse();
+}
+```
+
+### Passing Additional Tools
+
+You can also pass additional AI SDK tools to merge with executeCode:
+
+```typescript
+import { codemode } from "@/lib/codemode";
+import { tool } from "ai";
+import { z } from "zod";
+
+const { system, tools } = codemode({
+  system: "You are a helpful assistant",
   tools: {
-    executeCode: createCodeExecutionTool(codeMode),
+    getWeather: tool({
+      description: "Get current weather",
+      inputSchema: z.object({ city: z.string() }),
+      execute: async ({ city }) => fetchWeather(city),
+    }),
   },
 });
 ```

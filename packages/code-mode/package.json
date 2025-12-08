@@ -11,6 +11,10 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
+    "./ai": {
+      "import": "./dist/ai/index.js",
+      "types": "./dist/ai/index.d.ts"
+    },
     "./core": {
       "import": "./dist/core/index.js",
       "types": "./dist/core/index.d.ts"
@@ -72,12 +76,16 @@
     "zod": "^4.0.0"
   },
   "peerDependencies": {
+    "ai": ">=4.0.0",
     "@daytonaio/sdk": ">=0.100.0",
     "@trpc/client": ">=11.0.0",
     "@trpc/server": ">=11.0.0",
     "superjson": ">=2.0.0"
   },
   "peerDependenciesMeta": {
+    "ai": {
+      "optional": true
+    },
     "@daytonaio/sdk": {
       "optional": true
     },
@@ -92,6 +100,7 @@
     }
   },
   "devDependencies": {
+    "ai": "^5.0.102",
     "@daytonaio/sdk": "^0.121.0",
     "@trpc/client": "^11.7.2",
     "@trpc/server": "^11.7.2",

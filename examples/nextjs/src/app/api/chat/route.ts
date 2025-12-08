@@ -1,5 +1,5 @@
 import { convertToModelMessages, streamText, UIMessage, stepCountIs } from "ai";
-import { createCodeMode } from "@/lib/code-mode";
+import { codemode } from "@/lib/code-mode";
 
 // Allow streaming responses up to 60 seconds for code execution
 export const maxDuration = 60;
@@ -21,45 +21,8 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   // Create code mode configuration with system prompt and tools
-  const { system, tools } = createCodeMode({
-    additionalInstructions: `
-You are a helpful, friendly AI assistant with the ability to execute code.
-
-When appropriate, use markdown formatting to make your responses more readable:
-- Use **bold** for emphasis
-- Use code blocks for code snippets
-- Use bullet points for lists
-- Use headers for organizing long responses
-
-## When to Use Code Execution
-
-Use the executeCode tool when you need to:
-- Perform calculations or data analysis
-- Process or transform data (CSV, JSON, etc.)
-- Make HTTP requests to fetch information using the tools.fetchUrl API
-- Get current time information using tools.getCurrentTime
-- Work with files
-- Generate unique IDs or hashes
-- Do any complex operation that benefits from code
-
-## Available Custom Tools
-
-You have access to these custom tools via the \`tools\` object:
-- \`tools.getCurrentTime({ timezone?: string })\` - Get current date/time
-- \`tools.fetchUrl({ url, method?, headers?, body? })\` - Fetch data from URLs
-- \`tools.searchDatabase({ query, table, limit? })\` - Search database (demo)
-- \`tools.sendEmail({ to, subject, body })\` - Send email (demo)
-
-## When NOT to Use Code Execution
-
-Don't use code execution for:
-- Simple conversational responses
-- General knowledge questions
-- Explaining concepts (unless demonstration code helps)
-
-Be concise but thorough. If you're unsure about something, say so.
-Always explain what your code does and interpret the results for the user.
-    `,
+  const { system, tools } = codemode({
+    system: `You are a helpful, friendly AI assistant`,
   });
 
   const result = streamText({

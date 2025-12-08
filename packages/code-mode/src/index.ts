@@ -75,6 +75,9 @@ export * from "./providers";
 // Utility exports
 export * from "./utils";
 
+// AI SDK integration exports
+export * from "./ai";
+
 // Re-export commonly used types for convenience
 export type {
   ExecutionContext,
