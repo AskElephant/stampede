@@ -1,0 +1,105 @@
+{
+  "name": "@askelephant/code-mode",
+  "version": "0.1.0",
+  "description": "A modular framework for executing LLM-generated code in secure sandboxes with pluggable providers",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
+    },
+    "./providers": {
+      "import": "./dist/providers/index.js",
+      "types": "./dist/providers/index.d.ts"
+    },
+    "./providers/sandbox": {
+      "import": "./dist/providers/sandbox/index.js",
+      "types": "./dist/providers/sandbox/index.d.ts"
+    },
+    "./providers/protocol": {
+      "import": "./dist/providers/protocol/index.js",
+      "types": "./dist/providers/protocol/index.d.ts"
+    },
+    "./providers/protocol/trpc": {
+      "import": "./dist/providers/protocol/trpc/index.js",
+      "types": "./dist/providers/protocol/trpc/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "llm",
+    "code-execution",
+    "sandbox",
+    "ai",
+    "mcp",
+    "daytona",
+    "trpc",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/code-mode"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/code-mode/issues"
+  },
+  "homepage": "https://github.com/your-org/code-mode#readme",
+  "dependencies": {
+    "jose": "^6.1.2",
+    "zod": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@daytonaio/sdk": ">=0.100.0",
+    "@trpc/client": ">=11.0.0",
+    "@trpc/server": ">=11.0.0",
+    "superjson": ">=2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@daytonaio/sdk": {
+      "optional": true
+    },
+    "@trpc/client": {
+      "optional": true
+    },
+    "@trpc/server": {
+      "optional": true
+    },
+    "superjson": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@daytonaio/sdk": "^0.121.0",
+    "@trpc/client": "^11.7.2",
+    "@trpc/server": "^11.7.2",
+    "@types/node": "^22.0.0",
+    "superjson": "^2.2.5",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

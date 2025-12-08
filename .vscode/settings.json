@@ -1,0 +1,5 @@
+{
+  "typescript.experimental.useTsgo": true,
+  "oxc.fmt.experimental": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode"
+}

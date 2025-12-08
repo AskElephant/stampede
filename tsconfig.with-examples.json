@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "composite": true
+  },
+  "references": [
+    {
+      "path": "./"
+    },
+    {
+      "path": "examples/nextjs"
+    },
+  ],
+  "include": []
+}

@@ -1,0 +1,28 @@
+{
+  "name": "code-mode-monorepo",
+  "scripts": {
+    "build": "tsgo",
+    "lint": "oxlint --fix --type-aware",
+    "lint:check": "oxlint --deny-warnings --type-aware",
+    "test": "vitest",
+    "test:watch": "vitest watch"
+  },
+  "devDependencies": {
+    "@typescript/native-preview": "7.0.0-dev.20251208.1",
+    "oxlint": "^1.32.0",
+    "oxlint-tsgolint": "^0.8.4",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": "^22.0.0 || ^24.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AskElephant/code-mode.git"
+  },
+  "license": "Apache-2.0",
+  "author": "AskElephant",
+  "homepage": "https://github.com/AskElephant/code-mode",
+  "packageManager": "pnpm@10.11.0",
+  "keywords": []
+}

@@ -1,0 +1,6 @@
+{
+  "references": [
+    { "path": "packages/code-mode" },
+  ],
+  "include": []
+}
