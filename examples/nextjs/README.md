@@ -227,13 +227,7 @@ src/
 │       ├── code-execution.tsx    # Code execution display component
 │       └── ...
 └── lib/
-    └── code-mode/
-        ├── index.ts              # Main exports and createCodeMode()
-        ├── sandbox.ts            # Daytona sandbox management
-        ├── sandbox-types.ts      # TypeScript API definitions for LLM
-        ├── sandbox-with-tools.ts # Sandbox with custom tools
-        ├── tool-registry.ts      # Tool definition and registration
-        └── tool-bridge.ts        # Secure RPC bridge implementation
+    └── stampede.ts               # Stampede configuration and exports
 ```
 
 ## Usage Examples
@@ -241,10 +235,10 @@ src/
 ### Basic Code Mode
 
 ```typescript
-import { createCodeMode } from "@/lib/stampede";
+import { stampede } from "@/lib/stampede";
 
-const { system, tools } = createCodeMode({
-  additionalInstructions: "Focus on data analysis tasks"
+const { system, tools } = stampede({
+  system: "Focus on data analysis tasks"
 });
 
 const result = streamText({
@@ -255,21 +249,32 @@ const result = streamText({
 });
 ```
 
-### With Custom Tools
+### With Additional Tools
 
 ```typescript
-import { createCodeMode } from "@/lib/stampede";
+import { stampede } from "@/lib/stampede";
+import { tool } from "ai";
+import { z } from "zod";
 
-const { system, tools } = createCodeMode({
-  withTools: true, // Enable custom tools
-  additionalInstructions: "You have access to database and email tools"
+const { system, tools } = stampede({
+  system: "You have access to database and email tools",
+  tools: {
+    // Additional AI SDK tools can be passed through
+    getWeather: tool({
+      description: "Get current weather",
+      inputSchema: z.object({ city: z.string() }),
+      execute: async ({ city }) => fetchWeather(city),
+    }),
+  },
 });
 ```
 
 ### Defining Custom Tools
 
+Custom tools are defined using `defineTool` and registered with the Stampede instance:
+
 ```typescript
-import { defineTool, createToolRegistry } from "@/lib/stampede";
+import { defineTool } from "@askelephant/stampede";
 import { z } from "zod";
 
 const myTool = defineTool({
@@ -292,19 +297,23 @@ const myTool = defineTool({
   },
 });
 
-const registry = createToolRegistry();
-registry.register(myTool);
+// Register tools when creating the Stampede instance
+const stampedeInstance = new Stampede({
+  sandboxProvider: new DaytonaSandboxProvider({ ... }),
+  bridgeProtocol: new TRPCToolBridgeProtocol(),
+  bridgeConfig: { ... },
+  tools: [myTool], // Register custom tools here
+});
 ```
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `sandbox.ts` | Manages Daytona sandbox lifecycle |
-| `sandbox-types.ts` | TypeScript definitions injected into LLM context |
-| `tool-registry.ts` | Define and register custom tools |
-| `tool-bridge.ts` | Secure RPC layer for production tools |
-| `code-execution.tsx` | React component for displaying execution results |
+| `lib/stampede.ts` | Stampede configuration, custom tools, and exports |
+| `api/chat/route.ts` | Chat API with Stampede code execution |
+| `api/trpc/[trpc]/route.ts` | tRPC endpoint for tool bridge |
+| `components/ai-elements/code-execution.tsx` | React component for displaying execution results |
 
 ## References
 

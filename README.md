@@ -29,7 +29,7 @@ pnpm add @trpc/server @trpc/client superjson  # For tRPC protocol
 
 ```typescript
 import {
-  CodeMode,
+  Stampede,
   DaytonaSandboxProvider,
   TRPCToolBridgeProtocol,
   defineTool,
@@ -79,8 +79,8 @@ const fetchUrl = defineTool({
   },
 });
 
-// 2. Create CodeMode instance
-const codeMode = new CodeMode({
+// 2. Create Stampede instance
+const stampede = new Stampede({
   sandboxProvider: new DaytonaSandboxProvider({
     apiKey: process.env.DAYTONA_API_KEY,
   }),
@@ -96,10 +96,10 @@ const codeMode = new CodeMode({
 });
 
 // 3. Initialize
-await codeMode.initialize();
+await stampede.initialize();
 
 // 4. Execute code
-const result = await codeMode.executeCode(`
+const result = await stampede.executeCode(`
   const time = await tools.getCurrentTime({ timezone: "America/New_York" });
   console.log("Current time:", time.readable);
 
@@ -121,7 +121,7 @@ console.log(result.output);
                                 │
                                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                         CodeMode                                 │
+│                          Stampede                                │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
 │  │  Tool Registry  │  │ Sandbox Provider│  │ Bridge Protocol │ │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
@@ -235,13 +235,13 @@ class GraphQLToolBridgeProtocol extends BaseToolBridgeProtocol {
 The package provides a clean, ergonomic API for integrating with the Vercel AI SDK:
 
 ```typescript
-import { codemode } from "@askelephant/stampede/ai";
+import { stampede } from "@askelephant/stampede/ai";
 import { streamText } from "ai";
 
-// Create a configured codemode function
-const { system, tools, initialize } = codemode({
+// Create a configured stampede function
+const { system, tools, initialize } = stampede({
   system: "You are a helpful assistant",
-  codeModeOptions: {
+  stampedeOptions: {
     sandboxProvider: new DaytonaSandboxProvider({ apiKey: process.env.DAYTONA_API_KEY }),
     bridgeProtocol: new TRPCToolBridgeProtocol(),
     bridgeConfig: {
@@ -264,16 +264,16 @@ const stream = streamText({
 });
 ```
 
-### Using withCodeMode for Reusable Configuration
+### Using withStampede for Reusable Configuration
 
-For applications where you configure CodeMode once and reuse it:
+For applications where you configure Stampede once and reuse it:
 
 ```typescript
-// lib/codemode.ts
-import { withCodeMode, CodeMode, DaytonaSandboxProvider, TRPCToolBridgeProtocol } from "@askelephant/stampede";
+// lib/stampede.ts
+import { withStampede, Stampede, DaytonaSandboxProvider, TRPCToolBridgeProtocol } from "@askelephant/stampede";
 
-// Configure your CodeMode instance
-const codeModeInstance = new CodeMode({
+// Configure your Stampede instance
+const stampedeInstance = new Stampede({
   sandboxProvider: new DaytonaSandboxProvider({ apiKey: process.env.DAYTONA_API_KEY }),
   bridgeProtocol: new TRPCToolBridgeProtocol(),
   bridgeConfig: {
@@ -283,19 +283,19 @@ const codeModeInstance = new CodeMode({
   tools: [getCurrentTimeTool, fetchUrlTool],
 });
 
-// Export a pre-configured codemode function
-export const codemode = withCodeMode(codeModeInstance);
+// Export a pre-configured stampede function
+export const stampede = withStampede(stampedeInstance);
 ```
 
 ```typescript
 // app/api/chat/route.ts
-import { codemode } from "@/lib/codemode";
+import { stampede } from "@/lib/stampede";
 import { streamText } from "ai";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const { system, tools } = codemode({
+  const { system, tools } = stampede({
     system: "You are a helpful coding assistant",
   });
 
@@ -315,11 +315,11 @@ export async function POST(req: Request) {
 You can also pass additional AI SDK tools to merge with executeCode:
 
 ```typescript
-import { codemode } from "@/lib/codemode";
+import { stampede } from "@/lib/stampede";
 import { tool } from "ai";
 import { z } from "zod";
 
-const { system, tools } = codemode({
+const { system, tools } = stampede({
   system: "You are a helpful assistant",
   tools: {
     getWeather: tool({
@@ -335,10 +335,10 @@ const { system, tools } = codemode({
 
 ```typescript
 // app/api/trpc/[trpc]/route.ts
-import { codeMode } from "@/lib/stampede";
+import { stampede } from "@/lib/stampede";
 
 const handler = async (req: Request) => {
-  const requestHandler = codeMode.getRequestHandler();
+  const requestHandler = stampede.getRequestHandler();
   return requestHandler(req);
 };
 
@@ -357,12 +357,12 @@ The framework includes several security features:
 
 ## API Reference
 
-### CodeMode
+### Stampede
 
 The main class that orchestrates the code execution system.
 
 ```typescript
-const codeMode = new CodeMode({
+const stampede = new Stampede({
   sandboxProvider: SandboxProvider,
   bridgeProtocol: ToolBridgeProtocol,
   bridgeConfig: ToolBridgeConfig,
@@ -372,12 +372,12 @@ const codeMode = new CodeMode({
 });
 
 // Methods
-await codeMode.initialize();
-await codeMode.executeCode(code, config?);
-codeMode.registerTool(tool);
-codeMode.getToolTypeDefinitions();
-codeMode.getRequestHandler();
-await codeMode.cleanup();
+await stampede.initialize();
+await stampede.executeCode(code, config?);
+stampede.registerTool(tool);
+stampede.getToolTypeDefinitions();
+stampede.getRequestHandler();
+await stampede.cleanup();
 ```
 
 ### defineTool
