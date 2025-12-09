@@ -1,11 +1,11 @@
 import { convertToModelMessages, streamText, UIMessage, stepCountIs } from "ai";
-import { codemode } from "@/lib/code-mode";
+import { stampede } from "@/lib/stampede";
 
 // Allow streaming responses up to 60 seconds for code execution
 export const maxDuration = 60;
 
 /**
- * Chat API route with Code Mode enabled
+ * Chat API route with Stampede enabled
  *
  * This implements the "code mode" paradigm where instead of exposing tools
  * directly to the LLM, we present a TypeScript API. The LLM writes code
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   // Create code mode configuration with system prompt and tools
-  const { system, tools } = codemode({
+  const { system, tools } = stampede({
     system: `You are a helpful, friendly AI assistant`,
   });
 

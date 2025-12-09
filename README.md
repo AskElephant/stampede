@@ -1,4 +1,4 @@
-# @askelephant/code-mode
+# @askelephant/stampede
 
 A modular framework for executing LLM-generated code in secure sandboxes with pluggable sandbox providers and RPC protocols.
 
@@ -18,7 +18,7 @@ This framework implements the "Code Mode" paradigm for AI assistants, where inst
 
 ```bash
 # Core package
-pnpm add @askelephant/code-mode
+pnpm add @askelephant/stampede
 
 # Required peer dependencies (based on your providers)
 pnpm add @daytonaio/sdk        # For Daytona sandbox provider
@@ -33,7 +33,7 @@ import {
   DaytonaSandboxProvider,
   TRPCToolBridgeProtocol,
   defineTool,
-} from "@askelephant/code-mode";
+} from "@askelephant/stampede";
 import { z } from "zod";
 
 // 1. Define your custom tools
@@ -143,7 +143,7 @@ import {
   BaseSandboxProvider,
   SandboxConfig,
   CodeExecutionResult,
-} from "@askelephant/code-mode";
+} from "@askelephant/stampede";
 
 class E2BSandboxProvider extends BaseSandboxProvider {
   readonly name = "e2b";
@@ -179,7 +179,7 @@ import {
   BaseToolBridgeProtocol,
   ToolBridgeConfig,
   ToolRegistry,
-} from "@askelephant/code-mode";
+} from "@askelephant/stampede";
 
 class GraphQLToolBridgeProtocol extends BaseToolBridgeProtocol {
   readonly name = "graphql";
@@ -235,7 +235,7 @@ class GraphQLToolBridgeProtocol extends BaseToolBridgeProtocol {
 The package provides a clean, ergonomic API for integrating with the Vercel AI SDK:
 
 ```typescript
-import { codemode } from "@askelephant/code-mode/ai";
+import { codemode } from "@askelephant/stampede/ai";
 import { streamText } from "ai";
 
 // Create a configured codemode function
@@ -270,7 +270,7 @@ For applications where you configure CodeMode once and reuse it:
 
 ```typescript
 // lib/codemode.ts
-import { withCodeMode, CodeMode, DaytonaSandboxProvider, TRPCToolBridgeProtocol } from "@askelephant/code-mode";
+import { withCodeMode, CodeMode, DaytonaSandboxProvider, TRPCToolBridgeProtocol } from "@askelephant/stampede";
 
 // Configure your CodeMode instance
 const codeModeInstance = new CodeMode({
@@ -335,7 +335,7 @@ const { system, tools } = codemode({
 
 ```typescript
 // app/api/trpc/[trpc]/route.ts
-import { codeMode } from "@/lib/code-mode";
+import { codeMode } from "@/lib/stampede";
 
 const handler = async (req: Request) => {
   const requestHandler = codeMode.getRequestHandler();

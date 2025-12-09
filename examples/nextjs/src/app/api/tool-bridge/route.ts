@@ -10,12 +10,12 @@
  * - Debug tool bridge configuration
  */
 
-import { getCodeMode } from "@/lib/code-mode";
+import { getStampede } from "@/lib/stampede";
 
 // Health check endpoint
 export async function GET() {
-  const codeMode = getCodeMode();
-  const registry = codeMode.getToolRegistry();
+  const stampede = getStampede();
+  const registry = stampede.getToolRegistry();
   const toolNames = registry.getToolNames();
 
   return new Response(

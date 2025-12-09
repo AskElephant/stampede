@@ -241,7 +241,7 @@ src/
 ### Basic Code Mode
 
 ```typescript
-import { createCodeMode } from "@/lib/code-mode";
+import { createCodeMode } from "@/lib/stampede";
 
 const { system, tools } = createCodeMode({
   additionalInstructions: "Focus on data analysis tasks"
@@ -258,7 +258,7 @@ const result = streamText({
 ### With Custom Tools
 
 ```typescript
-import { createCodeMode } from "@/lib/code-mode";
+import { createCodeMode } from "@/lib/stampede";
 
 const { system, tools } = createCodeMode({
   withTools: true, // Enable custom tools
@@ -269,7 +269,7 @@ const { system, tools } = createCodeMode({
 ### Defining Custom Tools
 
 ```typescript
-import { defineTool, createToolRegistry } from "@/lib/code-mode";
+import { defineTool, createToolRegistry } from "@/lib/stampede";
 import { z } from "zod";
 
 const myTool = defineTool({

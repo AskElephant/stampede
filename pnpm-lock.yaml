@@ -26,9 +26,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^2.0.102
         version: 2.0.109(react@19.2.0)(zod@4.1.13)
-      '@askelephant/code-mode':
+      '@askelephant/stampede':
         specifier: workspace:*
-        version: link:../../packages/code-mode
+        version: link:../../packages/stampede
       '@aws-sdk/client-s3':
         specifier: 3.946.0
         version: 3.946.0
@@ -163,7 +163,7 @@ importers:
         specifier: ^5
         version: 5.9.3
 
-  packages/code-mode:
+  packages/stampede:
     dependencies:
       jose:
         specifier: ^6.1.2
@@ -184,15 +184,15 @@ importers:
       '@types/node':
         specifier: ^22.0.0
         version: 22.19.1
+      '@typescript/native-preview':
+        specifier: 7.0.0-dev.20251208.1
+        version: 7.0.0-dev.20251208.1
       ai:
         specifier: ^5.0.102
         version: 5.0.108(zod@4.1.13)
       superjson:
         specifier: ^2.2.5
         version: 2.2.6
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
 
 packages:
 

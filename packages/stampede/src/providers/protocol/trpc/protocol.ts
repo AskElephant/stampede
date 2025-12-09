@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { TRPCToolBridgeProtocol } from "@askelephant/code-mode/providers";
+ * import { TRPCToolBridgeProtocol } from "@askelephant/stampede/providers";
  *
  * const protocol = new TRPCToolBridgeProtocol();
  *

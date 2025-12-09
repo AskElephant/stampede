@@ -1,8 +1,8 @@
 /**
- * Code Mode Configuration
+ * Stampede Configuration
  *
- * This file configures the CodeMode instance for the application.
- * It uses the @askelephant/code-mode package to set up:
+ * This file configures the Stampede instance for the application.
+ * It uses the @askelephant/stampede package to set up:
  * - Daytona sandbox provider for code execution
  * - tRPC protocol for secure tool communication
  * - Custom tools that can be called from sandbox code
@@ -10,16 +10,16 @@
 
 import { z } from "zod";
 import {
-  CodeMode,
+  Stampede,
   DaytonaSandboxProvider,
   TRPCToolBridgeProtocol,
   defineTool,
   buildSystemPrompt,
-  CODE_MODE_SYSTEM_PROMPT,
+  STAMPEDE_SYSTEM_PROMPT,
   SANDBOX_TYPE_DEFINITIONS,
-  withCodeMode,
+  withStampede,
   type ToolDefinition,
-} from "@askelephant/code-mode";
+} from "@askelephant/stampede";
 
 // =============================================================================
 // Custom Tool Definitions
@@ -209,17 +209,17 @@ export const sendEmailTool = defineTool({
 });
 
 // =============================================================================
-// CodeMode Instance
+// Stampede Instance
 // =============================================================================
 
-let codeModeInstance: CodeMode | null = null;
+let stampedeInstance: Stampede | null = null;
 
 /**
- * Get or create the CodeMode instance
+ * Get or create the Stampede instance
  */
-export function getCodeMode(): CodeMode {
-  if (!codeModeInstance) {
-    codeModeInstance = new CodeMode({
+export function getStampede(): Stampede {
+  if (!stampedeInstance) {
+    stampedeInstance = new Stampede({
       // Daytona sandbox provider for secure code execution
       sandboxProvider: new DaytonaSandboxProvider({
         apiKey: process.env.DAYTONA_API_KEY,
@@ -251,7 +251,7 @@ export function getCodeMode(): CodeMode {
       // Sandbox configuration
       sandboxConfig: {
         autoStopInterval: 30,
-        labels: { purpose: "code-mode-trpc-network-v2" },
+        labels: { purpose: "stampede-trpc-network-v2" },
         network: {
           blockAll: false,
           allowList: ["*"],
@@ -268,7 +268,7 @@ export function getCodeMode(): CodeMode {
     });
   }
 
-  return codeModeInstance;
+  return stampedeInstance;
 }
 
 // =============================================================================
@@ -276,15 +276,15 @@ export function getCodeMode(): CodeMode {
 // =============================================================================
 
 /**
- * Create the codemode function with our pre-configured CodeMode instance.
+ * Create the stampede function with our pre-configured Stampede instance.
  *
  * This provides a clean, ergonomic API for integrating with the AI SDK:
  *
  * @example
  * ```typescript
- * import { codemode } from "@/lib/code-mode";
+ * import { stampede } from "@/lib/stampede";
  *
- * const { system, tools } = codemode({
+ * const { system, tools } = stampede({
  *   system: "You are a helpful assistant",
  * });
  *
@@ -296,14 +296,14 @@ export function getCodeMode(): CodeMode {
  * });
  * ```
  */
-export const codemode = withCodeMode(getCodeMode());
+export const stampede = withStampede(getStampede());
 
 /**
  * Legacy API - kept for backwards compatibility
  *
- * @deprecated Use `codemode()` instead for a cleaner API
+ * @deprecated Use `stampede()` instead for a cleaner API
  */
-export function createCodeMode(
+export function createStampede(
   config: {
     additionalInstructions?: string;
     userId?: string;
@@ -313,7 +313,7 @@ export function createCodeMode(
 ) {
   const { additionalInstructions, ...executionConfig } = config;
 
-  return codemode({
+  return stampede({
     system: additionalInstructions,
     executionConfig,
   });
@@ -321,9 +321,9 @@ export function createCodeMode(
 
 // Re-export useful items from the package
 export {
-  CodeMode,
+  Stampede,
   buildSystemPrompt,
-  CODE_MODE_SYSTEM_PROMPT,
+  STAMPEDE_SYSTEM_PROMPT,
   SANDBOX_TYPE_DEFINITIONS,
   defineTool,
 };

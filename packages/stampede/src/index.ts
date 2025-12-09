@@ -1,5 +1,5 @@
 /**
- * Code Mode Framework
+ * Stampede Framework
  *
  * A modular framework for executing LLM-generated code in secure sandboxes
  * with pluggable sandbox providers and RPC protocols.
@@ -7,11 +7,11 @@
  * @example
  * ```typescript
  * import {
- *   CodeMode,
+ *   Stampede,
  *   DaytonaSandboxProvider,
  *   TRPCToolBridgeProtocol,
  *   defineTool,
- * } from "@askelephant/code-mode";
+ * } from "@askelephant/stampede";
  * import { z } from "zod";
  *
  * // Define a custom tool
@@ -36,8 +36,8 @@
  *   },
  * });
  *
- * // Create the code mode instance
- * const codeMode = new CodeMode({
+ * // Create the stampede instance
+ * const stampede = new Stampede({
  *   sandboxProvider: new DaytonaSandboxProvider({
  *     apiKey: process.env.DAYTONA_API_KEY,
  *   }),
@@ -52,10 +52,10 @@
  * });
  *
  * // Initialize
- * await codeMode.initialize();
+ * await stampede.initialize();
  *
  * // Execute code
- * const result = await codeMode.executeCode(`
+ * const result = await stampede.executeCode(`
  *   const time = await tools.getCurrentTime({ timezone: "America/New_York" });
  *   console.log("Current time:", time.readable);
  * `);
@@ -100,11 +100,11 @@ export type { ToolRegistry } from "./core/tool-registry";
 
 // Re-export main classes for convenience
 export {
-  CodeMode,
+  Stampede,
   buildSystemPrompt,
-  CODE_MODE_SYSTEM_PROMPT,
+  STAMPEDE_SYSTEM_PROMPT,
   SANDBOX_TYPE_DEFINITIONS,
-} from "./core/code-mode";
+} from "./core/stampede";
 
 export { defineTool, consoleLogger } from "./core/types";
 

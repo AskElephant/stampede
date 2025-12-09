@@ -1,16 +1,16 @@
 /**
- * AI SDK Integration for Code Mode
+ * AI SDK Integration for Stampede
  *
- * This module provides a clean, ergonomic API for integrating Code Mode
+ * This module provides a clean, ergonomic API for integrating Stampede
  * with the Vercel AI SDK (or compatible SDKs).
  *
  * @example
  * ```typescript
- * import { codemode } from "@askelephant/code-mode/ai";
+ * import { stampede } from "@askelephant/stampede/ai";
  * import { streamText } from "ai";
  * import { openai } from "@ai-sdk/openai";
  *
- * const { system, tools } = codemode({
+ * const { system, tools } = stampede({
  *   system: "You are a helpful assistant",
  *   tools: {
  *     // Additional AI SDK tools can be passed through
@@ -30,17 +30,17 @@
 
 import { z } from "zod";
 import { tool, type ToolSet } from "ai";
-import { CodeMode, buildSystemPrompt } from "../core/code-mode";
-import type { CodeModeOptions } from "../core/code-mode";
+import { Stampede, buildSystemPrompt } from "../core/stampede";
+import type { StampedeOptions } from "../core/stampede";
 import type { ToolDefinition, ExecutionConfig } from "../core/types";
 
 /**
- * Configuration options for the codemode() function
+ * Configuration options for the stampede() function
  */
-export interface CodemodeConfig {
+export interface StampedeConfig {
   /**
    * Custom system prompt / instructions to include.
-   * This will be appended to the Code Mode system prompt.
+   * This will be appended to the Stampede system prompt.
    */
   system?: string;
 
@@ -51,16 +51,16 @@ export interface CodemodeConfig {
   tools?: ToolSet;
 
   /**
-   * Pre-configured CodeMode instance to use.
-   * If not provided, you must provide codeModeOptions.
+   * Pre-configured Stampede instance to use.
+   * If not provided, you must provide stampedeOptions.
    */
-  codeMode?: CodeMode;
+  stampede?: Stampede;
 
   /**
-   * Options to create a new CodeMode instance.
-   * Required if codeMode is not provided.
+   * Options to create a new Stampede instance.
+   * Required if stampede is not provided.
    */
-  codeModeOptions?: CodeModeOptions;
+  stampedeOptions?: StampedeOptions;
 
   /**
    * Custom description for the executeCode tool.
@@ -88,11 +88,11 @@ export interface CodemodeConfig {
 }
 
 /**
- * Result of the codemode() function
+ * Result of the stampede() function
  */
-export interface CodemodeResult {
+export interface StampedeResult {
   /**
-   * The complete system prompt including Code Mode instructions,
+   * The complete system prompt including Stampede instructions,
    * tool type definitions, and custom instructions.
    */
   system: string;
@@ -104,12 +104,12 @@ export interface CodemodeResult {
   tools: ToolSet;
 
   /**
-   * The CodeMode instance (for advanced use cases)
+   * The Stampede instance (for advanced use cases)
    */
-  codeMode: CodeMode;
+  stampede: Stampede;
 
   /**
-   * Initialize the CodeMode instance.
+   * Initialize the Stampede instance.
    * Must be called before the first code execution.
    */
   initialize: () => Promise<void>;
@@ -120,23 +120,23 @@ export interface CodemodeResult {
   cleanup: () => Promise<void>;
 }
 
-// Module-level CodeMode instance for singleton pattern
-let defaultCodeModeInstance: CodeMode | null = null;
+// Module-level Stampede instance for singleton pattern
+let defaultStampedeInstance: Stampede | null = null;
 
 /**
  * Create a code execution integration for the AI SDK.
  *
- * This function provides a clean API for setting up Code Mode with the AI SDK.
+ * This function provides a clean API for setting up Stampede with the AI SDK.
  * It returns a `system` prompt and `tools` object ready to use with `streamText`.
  *
  * @example Basic usage
  * ```typescript
- * import { codemode } from "@askelephant/code-mode/ai";
+ * import { stampede } from "@askelephant/stampede/ai";
  * import { streamText } from "ai";
  *
- * const { system, tools, initialize } = codemode({
+ * const { system, tools, initialize } = stampede({
  *   system: "You are a helpful coding assistant",
- *   codeModeOptions: {
+ *   stampedeOptions: {
  *     sandboxProvider: new DaytonaSandboxProvider({ apiKey: process.env.DAYTONA_API_KEY }),
  *     bridgeProtocol: new TRPCToolBridgeProtocol(),
  *     bridgeConfig: {
@@ -157,13 +157,13 @@ let defaultCodeModeInstance: CodeMode | null = null;
  * });
  * ```
  *
- * @example With existing CodeMode instance
+ * @example With existing Stampede instance
  * ```typescript
- * const codeMode = getCodeMode(); // Your configured instance
+ * const myStampede = getStampede(); // Your configured instance
  *
- * const { system, tools } = codemode({
+ * const { system, tools } = stampede({
  *   system: "You are a data analysis assistant",
- *   codeMode,
+ *   stampede: myStampede,
  * });
  * ```
  *
@@ -171,9 +171,9 @@ let defaultCodeModeInstance: CodeMode | null = null;
  * ```typescript
  * import { tool } from "ai";
  *
- * const { system, tools } = codemode({
+ * const { system, tools } = stampede({
  *   system: "You are a helpful assistant",
- *   codeMode,
+ *   stampede: myStampede,
  *   tools: {
  *     getWeather: tool({
  *       description: "Get current weather",
@@ -184,32 +184,32 @@ let defaultCodeModeInstance: CodeMode | null = null;
  * });
  * ```
  */
-export function codemode(config: CodemodeConfig): CodemodeResult {
+export function stampede(config: StampedeConfig): StampedeResult {
   const {
     system: customSystem,
     tools: additionalTools,
-    codeMode: providedCodeMode,
-    codeModeOptions,
+    stampede: providedStampede,
+    stampedeOptions,
     executeCodeDescription,
     executionConfig,
     executeCodeToolName = "executeCode",
     includeSandboxTypes = true,
   } = config;
 
-  // Get or create CodeMode instance
-  let codeMode: CodeMode;
-  if (providedCodeMode) {
-    codeMode = providedCodeMode;
-  } else if (codeModeOptions) {
-    codeMode = new CodeMode(codeModeOptions);
+  // Get or create Stampede instance
+  let stampede: Stampede;
+  if (providedStampede) {
+    stampede = providedStampede;
+  } else if (stampedeOptions) {
+    stampede = new Stampede(stampedeOptions);
   } else {
     throw new Error(
-      "Either codeMode or codeModeOptions must be provided to codemode()"
+      "Either stampede or stampedeOptions must be provided to stampede()"
     );
   }
 
   // Build the system prompt
-  const toolTypeDefs = codeMode.getToolTypeDefinitions();
+  const toolTypeDefs = stampede.getToolTypeDefinitions();
   const systemPrompt = buildSystemPrompt({
     toolTypeDefinitions: toolTypeDefs,
     includeSandboxTypes,
@@ -217,7 +217,7 @@ export function codemode(config: CodemodeConfig): CodemodeResult {
   });
 
   // Create the code execution tool
-  const executeCodeTool = createExecuteCodeTool(codeMode, {
+  const executeCodeTool = createExecuteCodeTool(stampede, {
     description: executeCodeDescription,
     executionConfig,
   });
@@ -231,13 +231,13 @@ export function codemode(config: CodemodeConfig): CodemodeResult {
   return {
     system: systemPrompt,
     tools,
-    codeMode,
+    stampede,
     initialize: async () => {
-      if (!(await codeMode.isReady())) {
-        await codeMode.initialize();
+      if (!(await stampede.isReady())) {
+        await stampede.initialize();
       }
     },
-    cleanup: () => codeMode.cleanup(),
+    cleanup: () => stampede.cleanup(),
   };
 }
 
@@ -253,13 +253,13 @@ interface ExecuteCodeToolConfig {
  * Create the executeCode tool for AI SDK
  */
 function createExecuteCodeTool(
-  codeMode: CodeMode,
+  stampede: Stampede,
   config: ExecuteCodeToolConfig = {}
 ) {
   const { description, executionConfig } = config;
 
   // Generate description from registered tools
-  const toolRegistry = codeMode.getToolRegistry();
+  const toolRegistry = stampede.getToolRegistry();
   const toolNames = toolRegistry.getToolNames();
 
   const defaultDescription = `Execute TypeScript code in a secure sandbox environment.
@@ -293,12 +293,12 @@ Use console.log() to output results.`;
         .describe("Brief explanation of what the code does"),
     }),
     execute: async ({ code, explanation }) => {
-      // Ensure CodeMode is initialized
-      if (!(await codeMode.isReady())) {
-        await codeMode.initialize();
+      // Ensure Stampede is initialized
+      if (!(await stampede.isReady())) {
+        await stampede.initialize();
       }
 
-      const result = await codeMode.executeCode(code, {
+      const result = await stampede.executeCode(code, {
         userId: executionConfig?.userId ?? "sandbox-user",
         sessionId: executionConfig?.sessionId ?? `session-${Date.now()}`,
         scopes: executionConfig?.scopes ?? ["*"],
@@ -316,17 +316,17 @@ Use console.log() to output results.`;
 }
 
 /**
- * Create a codemode factory with pre-configured CodeMode options.
+ * Create a stampede factory with pre-configured Stampede options.
  *
- * This is useful when you want to reuse the same CodeMode configuration
+ * This is useful when you want to reuse the same Stampede configuration
  * across multiple places in your application.
  *
  * @example
  * ```typescript
- * // lib/codemode.ts
- * import { createCodemodeFactory } from "@askelephant/code-mode/ai";
+ * // lib/stampede.ts
+ * import { createStampedeFactory } from "@askelephant/stampede/ai";
  *
- * export const codemode = createCodemodeFactory({
+ * export const stampede = createStampedeFactory({
  *   sandboxProvider: new DaytonaSandboxProvider({ apiKey: process.env.DAYTONA_API_KEY }),
  *   bridgeProtocol: new TRPCToolBridgeProtocol(),
  *   bridgeConfig: {
@@ -337,59 +337,59 @@ Use console.log() to output results.`;
  * });
  *
  * // In your API route
- * import { codemode } from "@/lib/codemode";
+ * import { stampede } from "@/lib/stampede";
  *
- * const { system, tools } = codemode({
+ * const { system, tools } = stampede({
  *   system: "You are a helpful assistant",
  * });
  * ```
  */
-export function createCodemodeFactory(
-  defaultOptions: CodeModeOptions
+export function createStampedeFactory(
+  defaultOptions: StampedeOptions
 ): (
-  config?: Omit<CodemodeConfig, "codeModeOptions" | "codeMode">
-) => CodemodeResult {
-  // Create a singleton CodeMode instance
-  if (!defaultCodeModeInstance) {
-    defaultCodeModeInstance = new CodeMode(defaultOptions);
+  config?: Omit<StampedeConfig, "stampedeOptions" | "stampede">
+) => StampedeResult {
+  // Create a singleton Stampede instance
+  if (!defaultStampedeInstance) {
+    defaultStampedeInstance = new Stampede(defaultOptions);
   }
 
   return (config = {}) => {
-    return codemode({
+    return stampede({
       ...config,
-      codeMode: defaultCodeModeInstance!,
+      stampede: defaultStampedeInstance!,
     });
   };
 }
 
 /**
- * Helper to create a configured codemode function from a CodeMode instance.
+ * Helper to create a configured stampede function from a Stampede instance.
  *
  * @example
  * ```typescript
- * import { withCodeMode } from "@askelephant/code-mode/ai";
+ * import { withStampede } from "@askelephant/stampede/ai";
  *
- * const codeMode = getCodeMode(); // Your existing instance
- * const codemode = withCodeMode(codeMode);
+ * const myStampede = getStampede(); // Your existing instance
+ * const configuredStampede = withStampede(myStampede);
  *
- * const { system, tools } = codemode({
+ * const { system, tools } = configuredStampede({
  *   system: "You are a helpful assistant",
  * });
  * ```
  */
-export function withCodeMode(
-  codeModeInstance: CodeMode
+export function withStampede(
+  stampedeInstance: Stampede
 ): (
-  config?: Omit<CodemodeConfig, "codeModeOptions" | "codeMode">
-) => CodemodeResult {
+  config?: Omit<StampedeConfig, "stampedeOptions" | "stampede">
+) => StampedeResult {
   return (config = {}) => {
-    return codemode({
+    return stampede({
       ...config,
-      codeMode: codeModeInstance,
+      stampede: stampedeInstance,
     });
   };
 }
 
 // Re-export useful types
-export type { CodeModeOptions } from "../core/code-mode";
+export type { StampedeOptions } from "../core/stampede";
 export type { ToolDefinition, ExecutionConfig } from "../core/types";

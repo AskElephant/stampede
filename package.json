@@ -1,5 +1,5 @@
 {
-  "name": "code-mode-monorepo",
+  "name": "stampede-monorepo",
   "scripts": {
     "build": "tsgo",
     "lint": "oxlint --fix --type-aware",
@@ -18,11 +18,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AskElephant/code-mode.git"
+    "url": "git+https://github.com/AskElephant/stampede.git"
   },
   "license": "Apache-2.0",
   "author": "AskElephant",
-  "homepage": "https://github.com/AskElephant/code-mode",
+  "homepage": "https://github.com/AskElephant/stampede",
   "packageManager": "pnpm@10.11.0",
   "keywords": []
 }

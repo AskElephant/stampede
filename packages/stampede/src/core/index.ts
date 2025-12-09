@@ -1,5 +1,5 @@
 /**
- * Core exports for the Code Mode framework
+ * Core exports for the Stampede framework
  */
 
 // Types
@@ -38,11 +38,11 @@ export { BaseToolBridgeProtocol } from "./tool-bridge-protocol";
 export type { ToolRegistry, ToolRegistryOptions } from "./tool-registry";
 export { createToolRegistry } from "./tool-registry";
 
-// Code Mode
-export type { CodeModeOptions } from "./code-mode";
+// Stampede
+export type { StampedeOptions } from "./stampede";
 export {
-  CodeMode,
+  Stampede,
   SANDBOX_TYPE_DEFINITIONS,
-  CODE_MODE_SYSTEM_PROMPT,
+  STAMPEDE_SYSTEM_PROMPT,
   buildSystemPrompt,
-} from "./code-mode";
+} from "./stampede";

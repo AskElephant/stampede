@@ -8,7 +8,7 @@
  *
  * @example
  * ```typescript
- * import { DaytonaSandboxProvider } from "@askelephant/code-mode/providers";
+ * import { DaytonaSandboxProvider } from "@askelephant/stampede/providers";
  *
  * const provider = new DaytonaSandboxProvider({
  *   apiKey: process.env.DAYTONA_API_KEY,
@@ -67,7 +67,7 @@ export interface DaytonaSandboxProviderOptions {
 
   /**
    * Sandbox label for finding/reusing existing sandboxes
-   * @default "code-mode"
+   * @default "stampede"
    */
   sandboxLabel?: string;
 }
@@ -88,7 +88,7 @@ export class DaytonaSandboxProvider extends BaseSandboxProvider {
       apiUrl: "https://app.daytona.io/api",
       target: "us",
       language: "typescript",
-      sandboxLabel: "code-mode",
+      sandboxLabel: "stampede",
       ...options,
     };
   }

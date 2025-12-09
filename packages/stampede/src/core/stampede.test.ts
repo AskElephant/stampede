@@ -1,36 +1,36 @@
 import { describe, it, expect, vi } from "vitest";
 import {
   buildSystemPrompt,
-  CODE_MODE_SYSTEM_PROMPT,
+  STAMPEDE_SYSTEM_PROMPT,
   SANDBOX_TYPE_DEFINITIONS,
-  CodeMode,
-} from "./code-mode";
+  Stampede,
+} from "./stampede";
 import type { SandboxProvider, SandboxState } from "./sandbox-provider";
 import type { ToolBridgeProtocol } from "./tool-bridge-protocol";
 import type { ToolBridgeConfig } from "./types";
 
 describe("System Prompt Helpers", () => {
-  describe("CODE_MODE_SYSTEM_PROMPT", () => {
+  describe("STAMPEDE_SYSTEM_PROMPT", () => {
     it("should contain instructions for code execution", () => {
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("execute TypeScript code");
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("sandbox environment");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("execute TypeScript code");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("sandbox environment");
     });
 
     it("should explain when to use code execution", () => {
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("When to Use Code Execution");
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("calculations");
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("data analysis");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("When to Use Code Execution");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("calculations");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("data analysis");
     });
 
     it("should include code writing guidelines", () => {
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("How to Write Code");
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("TypeScript syntax");
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("console.log");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("How to Write Code");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("TypeScript syntax");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("console.log");
     });
 
     it("should include an example", () => {
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("Example");
-      expect(CODE_MODE_SYSTEM_PROMPT).toContain("```typescript");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("Example");
+      expect(STAMPEDE_SYSTEM_PROMPT).toContain("```typescript");
     });
   });
 
@@ -72,7 +72,7 @@ describe("System Prompt Helpers", () => {
     it("should include base system prompt", () => {
       const prompt = buildSystemPrompt({});
 
-      expect(prompt).toContain(CODE_MODE_SYSTEM_PROMPT);
+      expect(prompt).toContain(STAMPEDE_SYSTEM_PROMPT);
     });
 
     it("should include sandbox types by default", () => {
@@ -128,7 +128,7 @@ describe("System Prompt Helpers", () => {
   });
 });
 
-describe("CodeMode", () => {
+describe("Stampede", () => {
   // Mock implementations
   const createMockSandboxProvider = (): SandboxProvider => ({
     name: "mock",
@@ -173,13 +173,13 @@ describe("CodeMode", () => {
       const sandboxProvider = createMockSandboxProvider();
       const bridgeProtocol = createMockBridgeProtocol();
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol,
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
+      await stampede.initialize();
 
       expect(sandboxProvider.initialize).toHaveBeenCalled();
       expect(bridgeProtocol.initialize).toHaveBeenCalled();
@@ -189,14 +189,14 @@ describe("CodeMode", () => {
       const sandboxProvider = createMockSandboxProvider();
       const bridgeProtocol = createMockBridgeProtocol();
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol,
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      await codeMode.initialize();
+      await stampede.initialize();
+      await stampede.initialize();
 
       expect(sandboxProvider.initialize).toHaveBeenCalledTimes(1);
     });
@@ -205,7 +205,7 @@ describe("CodeMode", () => {
       const sandboxProvider = createMockSandboxProvider();
       const bridgeProtocol = createMockBridgeProtocol();
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol,
         bridgeConfig: defaultConfig,
@@ -219,20 +219,20 @@ describe("CodeMode", () => {
         ],
       });
 
-      const registry = codeMode.getToolRegistry();
+      const registry = stampede.getToolRegistry();
       expect(registry.has("testTool")).toBe(true);
     });
   });
 
   describe("code execution", () => {
     it("should throw if not initialized", async () => {
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider: createMockSandboxProvider(),
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await expect(codeMode.executeCode('console.log("test")')).rejects.toThrow(
+      await expect(stampede.executeCode('console.log("test")')).rejects.toThrow(
         "not initialized"
       );
     });
@@ -241,14 +241,14 @@ describe("CodeMode", () => {
       const sandboxProvider = createMockSandboxProvider();
       const bridgeProtocol = createMockBridgeProtocol();
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol,
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      const result = await codeMode.executeCode('console.log("test")');
+      await stampede.initialize();
+      const result = await stampede.executeCode('console.log("test")');
 
       expect(sandboxProvider.executeCode).toHaveBeenCalled();
       expect(result.success).toBe(true);
@@ -257,14 +257,14 @@ describe("CodeMode", () => {
     it("should create execution token for each run", async () => {
       const bridgeProtocol = createMockBridgeProtocol();
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider: createMockSandboxProvider(),
         bridgeProtocol,
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      await codeMode.executeCode('console.log("test")');
+      await stampede.initialize();
+      await stampede.executeCode('console.log("test")');
 
       expect(bridgeProtocol.createExecutionToken).toHaveBeenCalled();
     });
@@ -276,14 +276,14 @@ describe("CodeMode", () => {
         bridgeProtocol.generateClientRuntime as ReturnType<typeof vi.fn>
       ).mockReturnValue("const tools = {};");
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol,
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      await codeMode.executeCode('console.log("test")');
+      await stampede.initialize();
+      await stampede.executeCode('console.log("test")');
 
       const executedCode = (
         sandboxProvider.executeCode as ReturnType<typeof vi.fn>
@@ -297,14 +297,14 @@ describe("CodeMode", () => {
       const bridgeProtocol = createMockBridgeProtocol();
       (bridgeProtocol as { name: string }).name = "trpc"; // Set to trpc to trigger dependency install
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol,
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      await codeMode.executeCode('console.log("test")');
+      await stampede.initialize();
+      await stampede.executeCode('console.log("test")');
 
       expect(sandboxProvider.installDependencies).toHaveBeenCalledWith({
         "@trpc/client": "^11.0.0",
@@ -317,15 +317,15 @@ describe("CodeMode", () => {
       const bridgeProtocol = createMockBridgeProtocol();
       (bridgeProtocol as { name: string }).name = "trpc";
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol,
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      await codeMode.executeCode('console.log("test1")');
-      await codeMode.executeCode('console.log("test2")');
+      await stampede.initialize();
+      await stampede.executeCode('console.log("test1")');
+      await stampede.executeCode('console.log("test2")');
 
       expect(sandboxProvider.installDependencies).toHaveBeenCalledTimes(1);
     });
@@ -346,14 +346,14 @@ Result: test data`,
         toolCalls: [],
       });
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      const result = await codeMode.executeCode("await tools.getData({})");
+      await stampede.initialize();
+      const result = await stampede.executeCode("await tools.getData({})");
 
       expect(result.toolCalls).toHaveLength(1);
       expect(result.toolCalls[0].tool).toBe("getData");
@@ -377,14 +377,14 @@ Handled error`,
         toolCalls: [],
       });
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      const result = await codeMode.executeCode(
+      await stampede.initialize();
+      const result = await stampede.executeCode(
         "try { await tools.failingTool({}) }"
       );
 
@@ -411,14 +411,14 @@ Done`,
         toolCalls: [],
       });
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      const result = await codeMode.executeCode("// code");
+      await stampede.initialize();
+      const result = await stampede.executeCode("// code");
 
       expect(result.toolCalls).toHaveLength(2);
       expect(result.toolCalls[0].tool).toBe("tool1");
@@ -437,14 +437,14 @@ Done`,
         toolCalls: [],
       });
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      const result = await codeMode.executeCode("console.log('test')");
+      await stampede.initialize();
+      const result = await stampede.executeCode("console.log('test')");
 
       expect(result.toolCalls).toHaveLength(0);
       expect(result.output).toBe("Just regular output\nNo tools here");
@@ -463,14 +463,14 @@ Regular output`,
         toolCalls: [],
       });
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      const result = await codeMode.executeCode("// code");
+      await stampede.initialize();
+      const result = await stampede.executeCode("// code");
 
       // Should gracefully skip malformed tool call
       expect(result.toolCalls).toHaveLength(0);
@@ -482,14 +482,14 @@ Regular output`,
     it("should cleanup sandbox provider", async () => {
       const sandboxProvider = createMockSandboxProvider();
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      await codeMode.cleanup();
+      await stampede.initialize();
+      await stampede.cleanup();
 
       expect(sandboxProvider.cleanup).toHaveBeenCalled();
     });
@@ -497,17 +497,17 @@ Regular output`,
     it("should reset initialization state after cleanup", async () => {
       const sandboxProvider = createMockSandboxProvider();
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      await codeMode.cleanup();
+      await stampede.initialize();
+      await stampede.cleanup();
 
       // Should throw because not initialized anymore
-      await expect(codeMode.executeCode("test")).rejects.toThrow(
+      await expect(stampede.executeCode("test")).rejects.toThrow(
         "not initialized"
       );
     });
@@ -515,13 +515,13 @@ Regular output`,
 
   describe("request handler", () => {
     it("should throw if not initialized", () => {
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider: createMockSandboxProvider(),
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      expect(() => codeMode.getRequestHandler()).toThrow("not initialized");
+      expect(() => stampede.getRequestHandler()).toThrow("not initialized");
     });
 
     it("should return request handler from protocol", async () => {
@@ -531,14 +531,14 @@ Regular output`,
         bridgeProtocol.createRequestHandler as ReturnType<typeof vi.fn>
       ).mockReturnValue(mockHandler);
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider: createMockSandboxProvider(),
         bridgeProtocol,
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      const handler = codeMode.getRequestHandler();
+      await stampede.initialize();
+      const handler = stampede.getRequestHandler();
 
       expect(handler).toBe(mockHandler);
     });
@@ -546,13 +546,13 @@ Regular output`,
 
   describe("isReady", () => {
     it("should return false when not initialized", async () => {
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider: createMockSandboxProvider(),
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      const ready = await codeMode.isReady();
+      const ready = await stampede.isReady();
 
       expect(ready).toBe(false);
     });
@@ -563,14 +563,14 @@ Regular output`,
         true
       );
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      const ready = await codeMode.isReady();
+      await stampede.initialize();
+      const ready = await stampede.isReady();
 
       expect(ready).toBe(true);
       expect(sandboxProvider.isReady).toHaveBeenCalled();
@@ -582,14 +582,14 @@ Regular output`,
         false
       );
 
-      const codeMode = new CodeMode({
+      const stampede = new Stampede({
         sandboxProvider,
         bridgeProtocol: createMockBridgeProtocol(),
         bridgeConfig: defaultConfig,
       });
 
-      await codeMode.initialize();
-      const ready = await codeMode.isReady();
+      await stampede.initialize();
+      const ready = await stampede.isReady();
 
       expect(ready).toBe(false);
     });

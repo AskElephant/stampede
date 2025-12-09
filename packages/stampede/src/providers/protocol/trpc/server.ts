@@ -7,7 +7,7 @@
  * @example
  * ```typescript
  * // In your Next.js API route
- * import { createTRPCRouter, createTRPCContext } from "@askelephant/code-mode/providers";
+ * import { createTRPCRouter, createTRPCContext } from "@askelephant/stampede/providers";
  *
  * const router = createTRPCRouter(toolRegistry);
  *

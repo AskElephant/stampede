@@ -1,7 +1,7 @@
 /**
- * Example: Using the @askelephant/code-mode Framework
+ * Example: Using the @askelephant/stampede Framework
  *
- * This file demonstrates how to use the modular code-mode framework
+ * This file demonstrates how to use the modular stampede framework
  * that was extracted from this PoC. The framework provides:
  *
  * 1. Pluggable sandbox providers (Daytona by default, or your own)
@@ -12,20 +12,20 @@
  * To use the framework in your own project:
  *
  * ```bash
- * pnpm add @askelephant/code-mode @daytonaio/sdk @trpc/server @trpc/client superjson
+ * pnpm add @askelephant/stampede @daytonaio/sdk @trpc/server @trpc/client superjson
  * ```
  */
 
 import { z } from "zod";
 
-// These imports would come from the @askelephant/code-mode package
+// These imports would come from the @askelephant/stampede package
 // import {
-//   CodeMode,
+//   Stampede,
 //   DaytonaSandboxProvider,
 //   TRPCToolBridgeProtocol,
 //   defineTool,
 //   buildSystemPrompt,
-// } from "@askelephant/code-mode";
+// } from "@askelephant/stampede";
 
 // =============================================================================
 // Example: Define Custom Tools
@@ -241,21 +241,21 @@ export const sendEmailTool = {
 };
 
 // =============================================================================
-// Example: Initialize CodeMode (would use the framework)
+// Example: Initialize Stampede (would use the framework)
 // =============================================================================
 
 /**
- * Example initialization code (uncomment when using the @askelephant/code-mode package)
+ * Example initialization code (uncomment when using the @askelephant/stampede package)
  */
 /*
 import {
-  CodeMode,
+  Stampede,
   DaytonaSandboxProvider,
   TRPCToolBridgeProtocol,
-} from "@askelephant/code-mode";
+} from "@askelephant/stampede";
 
-// Create the CodeMode instance
-export const codeMode = new CodeMode({
+// Create the Stampede instance
+export const stampede = new Stampede({
   // Use Daytona sandbox provider (can be swapped for E2B, Docker, etc.)
   sandboxProvider: new DaytonaSandboxProvider({
     apiKey: process.env.DAYTONA_API_KEY,
@@ -282,7 +282,7 @@ export const codeMode = new CodeMode({
   // Sandbox configuration
   sandboxConfig: {
     autoStopInterval: 30,
-    labels: { purpose: "code-mode" },
+    labels: { purpose: "stampede" },
     network: {
       blockAll: false,
       allowList: ["*"],
@@ -299,10 +299,10 @@ export const codeMode = new CodeMode({
 });
 
 // Initialize on startup
-await codeMode.initialize();
+await stampede.initialize();
 
 // Export for use in API routes
-export { codeMode };
+export { stampede };
 */
 
 // =============================================================================
@@ -315,10 +315,10 @@ export { codeMode };
  * Create this file at: app/api/trpc/[trpc]/route.ts
  */
 /*
-import { codeMode } from "@/lib/code-mode";
+import { stampede } from "@/lib/stampede";
 
 const handler = async (req: Request) => {
-  const requestHandler = codeMode.getRequestHandler();
+  const requestHandler = stampede.getRequestHandler();
   return requestHandler(req);
 };
 
@@ -326,7 +326,7 @@ export { handler as GET, handler as POST };
 */
 
 // =============================================================================
-// Example: Chat Route with Code Mode
+// Example: Chat Route with Stampede
 // =============================================================================
 
 /**
@@ -336,7 +336,7 @@ export { handler as GET, handler as POST };
  */
 /*
 import { streamText, convertToModelMessages } from "ai";
-import { codeMode, buildSystemPrompt } from "@askelephant/code-mode";
+import { stampede, buildSystemPrompt } from "@askelephant/stampede";
 import { z } from "zod";
 
 export async function POST(req: Request) {
@@ -344,7 +344,7 @@ export async function POST(req: Request) {
 
   // Build system prompt with tool type definitions
   const system = buildSystemPrompt({
-    toolTypeDefinitions: codeMode.getToolTypeDefinitions(),
+    toolTypeDefinitions: stampede.getToolTypeDefinitions(),
     customInstructions: `
       You are a helpful AI assistant with the ability to execute code.
       Use the executeCode tool when you need to:
@@ -362,7 +362,7 @@ export async function POST(req: Request) {
       code: z.string().describe("TypeScript code to execute"),
     }),
     execute: async ({ code }: { code: string }) => {
-      return codeMode.executeCode(code, {
+      return stampede.executeCode(code, {
         userId: "user-123",
         sessionId: "session-abc",
         scopes: ["*"], // Grant all scopes for this example
@@ -393,7 +393,7 @@ import {
   BaseSandboxProvider,
   SandboxConfig,
   CodeExecutionResult,
-} from "@askelephant/code-mode";
+} from "@askelephant/stampede";
 
 class E2BSandboxProvider extends BaseSandboxProvider {
   readonly name = "e2b";
@@ -471,7 +471,7 @@ import {
   ToolRegistry,
   ExecutionContext,
   RequestHandler,
-  } from "@askelephant/code-mode";
+  } from "@askelephant/stampede";
 
 class GraphQLToolBridgeProtocol extends BaseToolBridgeProtocol {
   readonly name = "graphql";

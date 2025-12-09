@@ -1,5 +1,5 @@
 /**
- * Code Mode - The Main Entry Point
+ * Stampede - The Main Entry Point
  *
  * This is the main class that orchestrates the code execution system.
  * It brings together:
@@ -9,10 +9,10 @@
  *
  * @example
  * ```typescript
- * import { CodeMode, DaytonaSandboxProvider, TRPCToolBridgeProtocol } from "@askelephant/code-mode";
+ * import { Stampede, DaytonaSandboxProvider, TRPCToolBridgeProtocol } from "@askelephant/stampede";
  *
- * // Create the code mode instance
- * const codeMode = new CodeMode({
+ * // Create the stampede instance
+ * const stampede = new Stampede({
  *   sandboxProvider: new DaytonaSandboxProvider({
  *     apiKey: process.env.DAYTONA_API_KEY,
  *   }),
@@ -24,13 +24,13 @@
  * });
  *
  * // Register tools
- * codeMode.registerTool(myCustomTool);
+ * stampede.registerTool(myCustomTool);
  *
  * // Initialize
- * await codeMode.initialize();
+ * await stampede.initialize();
  *
  * // Execute code
- * const result = await codeMode.executeCode(`
+ * const result = await stampede.executeCode(`
  *   const time = await tools.getCurrentTime({ timezone: "UTC" });
  *   console.log(time);
  * `);
@@ -54,9 +54,9 @@ import type {
 } from "./types";
 
 /**
- * Configuration options for CodeMode
+ * Configuration options for Stampede
  */
-export interface CodeModeOptions {
+export interface StampedeOptions {
   /**
    * The sandbox provider for code execution
    */
@@ -89,11 +89,11 @@ export interface CodeModeOptions {
 }
 
 /**
- * The main CodeMode class
+ * The main Stampede class
  *
  * This class orchestrates all components of the code execution system.
  */
-export class CodeMode {
+export class Stampede {
   private readonly sandboxProvider: SandboxProvider;
   private readonly bridgeProtocol: ToolBridgeProtocol;
   private readonly toolRegistry: ToolRegistry;
@@ -103,7 +103,7 @@ export class CodeMode {
   private initialized = false;
   private dependenciesInstalled = false;
 
-  constructor(options: CodeModeOptions) {
+  constructor(options: StampedeOptions) {
     this.sandboxProvider = options.sandboxProvider;
     this.bridgeProtocol = options.bridgeProtocol;
     this.bridgeConfig = options.bridgeConfig;
@@ -122,7 +122,7 @@ export class CodeMode {
   }
 
   /**
-   * Initialize the code mode system
+   * Initialize the stampede system
    * This must be called before executing code
    */
   async initialize(): Promise<void> {
@@ -130,7 +130,7 @@ export class CodeMode {
       return;
     }
 
-    this.logger?.info("Initializing CodeMode...");
+    this.logger?.info("Initializing Stampede...");
 
     // Initialize the sandbox provider
     await this.sandboxProvider.initialize(this.sandboxConfig, this.logger);
@@ -143,7 +143,7 @@ export class CodeMode {
     );
 
     this.initialized = true;
-    this.logger?.info("CodeMode initialized successfully");
+    this.logger?.info("Stampede initialized successfully");
   }
 
   /**
@@ -180,7 +180,7 @@ export class CodeMode {
     config: ExecutionConfig = {}
   ): Promise<CodeExecutionResult> {
     if (!this.initialized) {
-      throw new Error("CodeMode not initialized. Call initialize() first.");
+      throw new Error("Stampede not initialized. Call initialize() first.");
     }
 
     const startTime = Date.now();
@@ -336,14 +336,14 @@ export class CodeMode {
    * ```typescript
    * // Next.js API route
    * export async function POST(req: Request) {
-   *   const handler = codeMode.getRequestHandler();
+   *   const handler = stampede.getRequestHandler();
    *   return handler(req);
    * }
    * ```
    */
   getRequestHandler(): RequestHandler {
     if (!this.initialized) {
-      throw new Error("CodeMode not initialized. Call initialize() first.");
+      throw new Error("Stampede not initialized. Call initialize() first.");
     }
     return this.bridgeProtocol.createRequestHandler();
   }
@@ -359,7 +359,7 @@ export class CodeMode {
    * Clean up resources
    */
   async cleanup(): Promise<void> {
-    this.logger?.info("Cleaning up CodeMode...");
+    this.logger?.info("Cleaning up Stampede...");
     await this.sandboxProvider.cleanup();
     this.initialized = false;
     this.dependenciesInstalled = false;
@@ -471,9 +471,9 @@ declare function sleep(ms: number): Promise<void>;
 `;
 
 /**
- * Default system prompt for code mode
+ * Default system prompt for stampede
  */
-export const CODE_MODE_SYSTEM_PROMPT = `You are an AI assistant with the ability to execute TypeScript code in a secure sandbox environment.
+export const STAMPEDE_SYSTEM_PROMPT = `You are an AI assistant with the ability to execute TypeScript code in a secure sandbox environment.
 
 ## When to Use Code Execution
 
@@ -509,7 +509,7 @@ export function buildSystemPrompt(options: {
   toolTypeDefinitions?: string;
   includeSandboxTypes?: boolean;
 }): string {
-  let prompt = CODE_MODE_SYSTEM_PROMPT;
+  let prompt = STAMPEDE_SYSTEM_PROMPT;
 
   if (options.includeSandboxTypes !== false) {
     prompt += "\n\n## Sandbox API Types\n\n```typescript";

@@ -1,5 +1,5 @@
 /**
- * Core Types for Code Mode Framework
+ * Core Types for Stampede Framework
  *
  * This file defines the foundational types used throughout the framework.
  * These types are provider-agnostic and define the contracts between

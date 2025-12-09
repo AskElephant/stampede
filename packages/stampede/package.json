@@ -1,5 +1,5 @@
 {
-  "name": "@askelephant/code-mode",
+  "name": "@askelephant/stampede",
   "version": "0.1.0",
   "description": "A modular framework for executing LLM-generated code in secure sandboxes with pluggable providers",
   "type": "module",
@@ -45,8 +45,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsgo",
+    "dev": "tsgo --watch",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit"
@@ -65,12 +65,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/code-mode"
+    "url": "https://github.com/AskElephant/stampede"
   },
   "bugs": {
-    "url": "https://github.com/your-org/code-mode/issues"
+    "url": "https://github.com/AskElephant/stampede/issues"
   },
-  "homepage": "https://github.com/your-org/code-mode#readme",
+  "homepage": "https://github.com/AskElephant/stampede#readme",
   "dependencies": {
     "jose": "^6.1.2",
     "zod": "^4.0.0"
@@ -105,8 +105,8 @@
     "@trpc/client": "^11.7.2",
     "@trpc/server": "^11.7.2",
     "@types/node": "^22.0.0",
-    "superjson": "^2.2.5",
-    "typescript": "^5.0.0"
+    "@typescript/native-preview": "7.0.0-dev.20251208.1",
+    "superjson": "^2.2.5"
   },
   "engines": {
     "node": ">=22.0.0"

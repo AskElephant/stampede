@@ -1,6 +1,6 @@
 {
   "references": [
-    { "path": "packages/code-mode" },
+    { "path": "packages/stampede" },
   ],
   "include": []
 }
