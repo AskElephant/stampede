@@ -33,8 +33,8 @@ importers:
         specifier: 3.946.0
         version: 3.946.0
       '@daytonaio/sdk':
-        specifier: ^0.121.0
-        version: 0.121.0(ws@8.18.3)
+        specifier: ^0.123.0
+        version: 0.123.0(ws@8.18.3)
       '@radix-ui/react-collapsible':
         specifier: ^1.1.12
         version: 1.1.12(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -482,11 +482,20 @@ packages:
   '@daytonaio/api-client@0.121.0':
     resolution: {integrity: sha512-+6pR6WtYEzn0G2JdTpoM+h3CYdlfUfSqs+J1r4+6vXWEYv7IHwGTyDfYqhGZv/PN82mhRCH0BbPtvY2CsT6fzg==}
 
+  '@daytonaio/api-client@0.123.0':
+    resolution: {integrity: sha512-1+RfQxhLVERUr9Ym/zE26ppsOjuzDyeBLVixrNJQLThs+wwwx9dLErG7LJnQlybK3VN09dF6ic9R0BV/notywg==}
+
   '@daytonaio/sdk@0.121.0':
     resolution: {integrity: sha512-8mKLRl5nNXbCaCWVCejOLrVUV0SS3gEIr7hZOwY1MtxudZhcZ0GsVc396QGH1k6nLYd3EhApkvEHqX2f1arqFg==}
 
+  '@daytonaio/sdk@0.123.0':
+    resolution: {integrity: sha512-M3bnGJ2+udxjwMJq7IzUqwbaBsqFuHDbFLncnMedqc5WQldjAZVeQrSnSnhlnXSxmSduhnBAqCXNyAT+N3P/qg==}
+
   '@daytonaio/toolbox-api-client@0.121.0':
     resolution: {integrity: sha512-RaMyxcXgh7l9+34pvKLh7iV6jNFb3CdXuokKpkHnAerLXntXQy4DrZ5JnRgytU5fO3gt03dXRN+fYD5VIsnSmA==}
+
+  '@daytonaio/toolbox-api-client@0.123.0':
+    resolution: {integrity: sha512-912y9IRRMf25KF1D3VXJDY6I/8d9EuCJcptIqlEpQszNhRusKf0bncGgpr/iNBhWvclPO1trPjiSMPQ7R5hMRA==}
 
   '@emnapi/core@1.7.1':
     resolution: {integrity: sha512-o1uhUASyo921r2XtHYOHy7gdkGLge8ghBEQHMWmyJFoXlpU58kIrhhN3w26lpQb6dspetweapMn2CSNwQ8I4wg==}
@@ -5442,6 +5451,12 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  '@daytonaio/api-client@0.123.0':
+    dependencies:
+      axios: 1.13.2
+    transitivePeerDependencies:
+      - debug
+
   '@daytonaio/sdk@0.121.0(ws@8.18.3)':
     dependencies:
       '@aws-sdk/client-s3': 3.946.0
@@ -5464,7 +5479,35 @@ snapshots:
       - debug
       - ws
 
+  '@daytonaio/sdk@0.123.0(ws@8.18.3)':
+    dependencies:
+      '@aws-sdk/client-s3': 3.946.0
+      '@aws-sdk/lib-storage': 3.946.0(@aws-sdk/client-s3@3.946.0)
+      '@daytonaio/api-client': 0.123.0
+      '@daytonaio/toolbox-api-client': 0.123.0
+      '@iarna/toml': 2.2.5
+      axios: 1.13.2
+      busboy: 1.6.0
+      dotenv: 17.2.3
+      expand-tilde: 2.0.2
+      fast-glob: 3.3.3
+      form-data: 4.0.5
+      isomorphic-ws: 5.0.0(ws@8.18.3)
+      pathe: 2.0.3
+      shell-quote: 1.8.3
+      tar: 6.2.1
+    transitivePeerDependencies:
+      - aws-crt
+      - debug
+      - ws
+
   '@daytonaio/toolbox-api-client@0.121.0':
+    dependencies:
+      axios: 1.13.2
+    transitivePeerDependencies:
+      - debug
+
+  '@daytonaio/toolbox-api-client@0.123.0':
     dependencies:
       axios: 1.13.2
     transitivePeerDependencies:

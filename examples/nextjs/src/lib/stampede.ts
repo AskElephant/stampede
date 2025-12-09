@@ -225,7 +225,7 @@ export function getStampede(): Stampede {
         apiKey: process.env.DAYTONA_API_KEY,
         apiUrl: process.env.DAYTONA_API_URL || "https://app.daytona.io/api",
         target: process.env.DAYTONA_TARGET || "us",
-        sandboxLabel: "code-mode-trpc-network-v2",
+        sandboxLabel: "stampede-trpc-network-v2",
       }),
 
       // tRPC protocol for type-safe tool communication
@@ -254,7 +254,7 @@ export function getStampede(): Stampede {
         labels: { purpose: "stampede-trpc-network-v2" },
         network: {
           blockAll: false,
-          allowList: ["*"],
+          // allowList: ["*"],
         },
       },
 
