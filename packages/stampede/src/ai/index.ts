@@ -378,14 +378,17 @@ export function createStampedeFactory(
  * ```
  */
 export function withStampede(
-  stampedeInstance: Stampede
+  stampedeInstance: Stampede | (() => Promise<Stampede>) | (() => Stampede)
 ): (
   config?: Omit<StampedeConfig, "stampedeOptions" | "stampede">
-) => StampedeResult {
-  return (config = {}) => {
+) => Promise<StampedeResult> {
+  return async (config = {}) => {
     return stampede({
       ...config,
-      stampede: stampedeInstance,
+      stampede:
+        typeof stampedeInstance === "function"
+          ? await stampedeInstance()
+          : stampedeInstance,
     });
   };
 }

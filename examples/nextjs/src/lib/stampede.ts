@@ -187,7 +187,7 @@ export const sendEmailTool = defineTool({
   rateLimit: 10,
   execute: async ({ to, subject, body }) => {
     // Security: Validate recipient domain
-    const allowedDomains = ["example.com", "yourcompany.com"];
+    const allowedDomains = ["example.com", "askelephant.ai"];
     const domain = to.split("@")[1];
 
     if (!allowedDomains.includes(domain)) {
@@ -282,9 +282,9 @@ export function getStampede(): Stampede {
  *
  * @example
  * ```typescript
- * import { stampede } from "@/lib/stampede";
+ * import { aiStampede } from "@/lib/stampede";
  *
- * const { system, tools } = stampede({
+ * const { system, tools } = aiStampede({
  *   system: "You are a helpful assistant",
  * });
  *
@@ -296,28 +296,7 @@ export function getStampede(): Stampede {
  * });
  * ```
  */
-export const stampede = withStampede(getStampede());
-
-/**
- * Legacy API - kept for backwards compatibility
- *
- * @deprecated Use `stampede()` instead for a cleaner API
- */
-export function createStampede(
-  config: {
-    additionalInstructions?: string;
-    userId?: string;
-    sessionId?: string;
-    scopes?: string[];
-  } = {}
-) {
-  const { additionalInstructions, ...executionConfig } = config;
-
-  return stampede({
-    system: additionalInstructions,
-    executionConfig,
-  });
-}
+export const aiStampede = withStampede(() => getStampede());
 
 // Re-export useful items from the package
 export {

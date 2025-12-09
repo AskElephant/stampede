@@ -517,14 +517,14 @@ pnpm add @askelephant/stampede
 └─────────────────────────────────────────────┘
          │              │              │
          ▼              ▼              ▼
-   Your Tools       Daytona         tRPC
+    Your Tools       Daytona          tRPC
 ```
 
 ^ Modular design. Swap components as needed.
 
 ---
 
-# Defining Tools with Zod
+# Defining Tools with Stampede
 
 ```typescript
 import { defineTool } from "@askelephant/stampede";
@@ -574,39 +574,12 @@ const stampede = new Stampede({
     serverUrl: "http://localhost:3000/api/trpc",
     tokenConfig: { secretKey: process.env.SECRET_KEY },
   },
-  tools: [getCurrentTime, fetchUrl],
 });
 
 await stampede.initialize();
 ```
 
 ^ Configure once. Use everywhere.
-
----
-
-# Stampede + Vercel AI SDK
-
-```typescript
-import { stampede } from "@askelephant/stampede/ai";
-import { streamText } from "ai";
-
-const { system, tools } = stampede({
-  system: "You are a helpful assistant",
-  stampedeOptions: {
-    sandboxProvider: new DaytonaSandboxProvider({ ... }),
-    tools: [myCustomTool],
-  },
-});
-
-const stream = streamText({
-  model: openai("gpt-4"),
-  system,
-  tools,
-  messages: [{ role: "user", content: "What time is it?" }],
-});
-```
-
-^ If you're using Vercel AI SDK, this is all you need.
 
 ---
 
@@ -641,18 +614,18 @@ export function Chat() {
 
 ---
 
-# API Route (Next.js)
+# Chat API Route (AI SDK/Next.js)
 
 ```typescript
 // app/api/chat/route.ts
-import { stampede } from "@/lib/stampede";
+import { aiStampede } from "@/lib/stampede";
 import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const { system, tools } = stampede({
+  const { system, tools } = await aiStampede({
     system: "You are a helpful coding assistant",
   });
 
@@ -671,11 +644,36 @@ export async function POST(req: Request) {
 
 ---
 
+# Tool Bridge API Route (tRPC)
+
+```typescript
+// app/api/trpc/[trpc]/route.ts
+import { getStampede } from "@/lib/stampede";
+
+const handler = async (req: Request) => {
+  const stampede = getStampede();
+
+  if (!(await stampede.isReady())) {
+    await stampede.initialize();
+  }
+
+  // Handle tool calls from the sandbox
+  const requestHandler = stampede.getRequestHandler();
+  return requestHandler(req);
+};
+
+export { handler as GET, handler as POST };
+```
+
+^ This is the bridge. When the sandbox executes code that calls a tool, it makes an HTTP request here. Stampede handles token verification and routes to the right tool.
+
+---
+
 [.background-color: #0a0a1a]
 
 # [fit] 🎬 Demo Time
 
-### Let's see Stampede in action
+### Let's see @askelephant/stampede in action
 
 ^ Time for the live demo! We'll show the chat interface, trigger a multi-step workflow, and watch the sandbox execute code in real-time.
 

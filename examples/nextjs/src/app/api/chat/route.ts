@@ -1,5 +1,5 @@
 import { convertToModelMessages, streamText, UIMessage, stepCountIs } from "ai";
-import { stampede } from "@/lib/stampede";
+import { aiStampede } from "@/lib/stampede";
 
 // Allow streaming responses up to 60 seconds for code execution
 export const maxDuration = 60;
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   // Create code mode configuration with system prompt and tools
-  const { system, tools } = stampede({
+  const { system, tools } = await aiStampede({
     system: `You are a helpful, friendly AI assistant`,
   });
 
