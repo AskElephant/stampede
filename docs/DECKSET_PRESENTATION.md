@@ -13,30 +13,15 @@ build-lists: true
 
 # Hi, I'm Kaden 👋
 
-- **Technical Co-founder** at AskElephant
 - 3.5 years working professionally with LLMs
   - 2 years at **Jasper.ai** — one of the OG AI writing platforms
-  - 1.5 years at **AskElephant** — building the future
+  - Left Jasper 1.5 years ago to start **AskElephant**
+  - **AskElephant** — building the future of Revenue Intelligence
 - I've seen the evolution from GPT-3 to agents
 - Today I'm here to tell you that **MCP is dead**...
 - ...sort of.
 
 ^ Welcome everyone! I've been in the LLM trenches for a while now. What I'm about to share changed how we think about AI agents at AskElephant.
-
----
-
-# About AskElephant 🐘
-
-We're building the future of **AI-powered revenue work**.
-
-- SaaS AI platform for complex workflows
-- Focus on making AI agents **actually useful** in production
-- Working with cutting-edge LLM technologies
-- Strong engineering culture with a focus on developer experience
-
-**We believe AI should amplify human capability, not replace it.**
-
-^ AskElephant is all about making AI actually work in the real world - not just demos, but production systems.
 
 ---
 
@@ -63,6 +48,20 @@ There's a better way. And by the end of this talk, you'll never look at tool cal
 5. **The Future** — Where we go from here
 
 ^ A story in five acts. Let's begin.
+
+---
+
+# Quick Pulse Check 🙋
+
+- **Who has heard of MCP** (Model Context Protocol)?
+
+- **Who has used an MCP server?** (Claude Desktop, Cursor, etc.)
+
+- **Who has built their own MCP server?**
+
+- **Who has run into scaling issues** with AI tool calling?
+
+^ Great way to gauge the room. The last question sets up our thesis perfectly.
 
 ---
 
