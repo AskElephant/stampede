@@ -782,20 +782,6 @@ careers@askelephant.ai
 
 ---
 
-# What We Offer
-
-- 🚀 Work on cutting-edge AI technology
-- 💰 Competitive salary + equity
-- 📚 Learning & AI tools budget
-- 🏥 Competitive benefits package
-- 🤝 Collaborative, low-ego team
-
-**Come build the future of Revenue Intelligence with us.**
-
-^ If you're interested, find me after the talk!
-
----
-
 [.background-color: #16213e]
 [.header: #ffffff]
 
