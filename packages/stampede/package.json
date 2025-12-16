@@ -103,7 +103,7 @@
     "ai": "^5.0.102",
     "@daytonaio/sdk": "^0.121.0",
     "@trpc/client": "^11.7.2",
-    "@trpc/server": "^11.7.2",
+    "@trpc/server": "^11.8.0",
     "@types/node": "^22.0.0",
     "@typescript/native-preview": "7.0.0-dev.20251208.1",
     "superjson": "^2.2.5"

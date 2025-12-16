@@ -25,7 +25,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@trpc/client": "^11.7.2",
-    "@trpc/server": "^11.7.2",
+    "@trpc/server": "^11.8.0",
     "@xyflow/react": "^12.9.3",
     "ai": "^5.0.102",
     "class-variance-authority": "^0.7.1",
