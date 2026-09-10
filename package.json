@@ -11,7 +11,7 @@
     "@typescript/native-preview": "7.0.0-dev.20251208.1",
     "oxlint": "^1.32.0",
     "oxlint-tsgolint": "^0.8.4",
-    "vitest": "^4.0.15"
+    "vitest": "^4.1.11"
   },
   "engines": {
     "node": "^22.0.0 || ^24.0.0"
